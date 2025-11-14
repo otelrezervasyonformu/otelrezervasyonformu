@@ -367,18 +367,18 @@
             const people = document.getElementById('people').value.trim() || '1';
             const note = document.getElementById('note').value.trim() || '-';
 
-            // Mesaj Metnini Oluştur
+            // Mesaj Metnini Oluştur (YILDIZLAR KALDIRILDI)
             const rawMessageText = 
                 `${t.wa_hello},\n\n` +
-                `*${t.wa_event}*: ${translatedEventName}\n` +
-                `*${t.wa_name}*: ${name}\n` +
-                `*${t.wa_room}*: ${room}\n` +
-                `*${t.wa_date}*: ${date}\n` +
-                `*${t.wa_time}*: ${time}\n` +
-                `*${t.wa_people}*: ${people}\n` +
-                `*${t.wa_note}*: ${note}`;
+                `${t.wa_event}: ${translatedEventName}\n` +
+                `${t.wa_name}: ${name}\n` +
+                `${t.wa_room}: ${room}\n` +
+                `${t.wa_date}: ${date}\n` +
+                `${t.wa_time}: ${time}\n` +
+                `${t.wa_people}: ${people}\n` +
+                `${t.wa_note}: ${note}`;
                 
-            // KRİTİK DÜZELTME: Tüm metni tek seferde URL kodlama ile düzgün bir şekilde gönder
+            // Tüm metni tek seferde URL kodlama ile düzgün bir şekilde gönder
             const encodedMessage = encodeURIComponent(rawMessageText);
             waLink.href = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
         }
@@ -399,19 +399,19 @@
             const note = document.getElementById('specificNote').value.trim() || '-';
             const photoName = specificPhotoNameHidden.value.trim() || '-'; 
 
-            // Mesaj Metnini Oluştur
+            // Mesaj Metnini Oluştur (YILDIZLAR KALDIRILDI)
             const rawMessageText = 
                 `${t.wa_hello},\n\n` +
-                `*${t.wa_event}*: ${translatedEventName}\n` +
-                `*${t.wa_catalog_name}*: ${photoName}\n` +
-                `*${t.wa_name}*: ${name}\n` +
-                `*${t.wa_room}*: ${room}\n` +
-                `*${t.wa_date}*: ${date}\n` +
-                `*${t.wa_time}*: ${time}\n` +
-                `*${t.wa_people}*: ${people}\n` +
-                `*${t.wa_note}*: ${note}`;
+                `${t.wa_event}: ${translatedEventName}\n` +
+                `${t.wa_catalog_name}: ${photoName}\n` +
+                `${t.wa_name}: ${name}\n` +
+                `${t.wa_room}: ${room}\n` +
+                `${t.wa_date}: ${date}\n` +
+                `${t.wa_time}: ${time}\n` +
+                `${t.wa_people}: ${people}\n` +
+                `${t.wa_note}: ${note}`;
                 
-            // KRİTİK DÜZELTME: Tüm metni tek seferde URL kodlama ile düzgün bir şekilde gönder
+            // Tüm metni tek seferde URL kodlama ile düzgün bir şekilde gönder
             const encodedMessage = encodeURIComponent(rawMessageText);
             specificWhatsappLink.href = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
         }
