@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Otel Etkinlik Rezervasyonu</title>
+    <style>
+        body {font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#f4f7f6; color:#333; margin:0; padding:20px;}
+        .container {max-width:900px; margin:auto; background:#fff; padding:25px; border-radius:12px; box-shadow:0 8px 25px rgba(0,0,0,0.1); position: relative;} 
+        h1 {text-align:center; color:#004d40; font-size:2em; margin-bottom:20px;}
+        .logo {text-align:center; margin-bottom:20px;}
+        .logo img {max-width:150px; height:auto;}
+        .lang-selector { position: absolute; top: 15px; right: 25px; z-index: 10; padding: 5px 10px; border-radius: 6px; border: 1px solid #ccc; background-color: #fff; cursor: pointer; font-size: 0.9em;}
+        .event-cards {display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:15px; margin-bottom:25px;}
+        .card {background:linear-gradient(135deg,#e0f2f1,#b2dfdb); border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.1); cursor:pointer; transition: transform 0.3s ease, box-shadow 0.3s ease; text-align:center; padding:15px; display:flex; flex-direction:column; justify-content:center; align-items:center;}
+        .card:hover {transform:translateY(-5px); box-shadow:0 6px 20px rgba(0,0,0,0.15);}
+        .card-icon {font-size:3em; margin-bottom:10px; color:#00796b;}
+        .card span {font-size:1.1em; font-weight:bold; color:#004d40;}
+        #eventDetail {display:none; background:#f8fcfb; padding:20px; border-radius:10px; border:1px solid #b2dfdb;}
+        #selectedEventTitle {color:#004d40; margin-bottom:15px; text-align:center;}
+        #eventImages {display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-bottom:20px; padding-bottom:10px;}
+        #eventImages div {position:relative; display:inline-block;}
+        #eventImages img { max-width: 800px; width: 100%; height: auto; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1); cursor: pointer; }
+        .delete-btn {position:absolute; top:2px; right:2px; background:rgba(0,0,0,0.6); color:#fff; border:none; border-radius:50%; cursor:pointer; font-size:0.8em; padding:2px 6px;}
+        form label {display:block; margin-top:15px; font-weight:bold; color:#555;}
+        form input[type="text"], form input[type="date"], form input[type="number"], form input[type="time"], form textarea {width:100%; padding:12px; margin-top:8px; border-radius:8px; border:1px solid #ccc; box-sizing:border-box; transition:border-color 0.3s;}
+        form input:focus, form textarea:focus {border-color:#00796b; outline:none;}
+        .send-btn {margin-top:20px; padding:12px; background:#25D366; color:#fff; border:none; border-radius:8px; width:100%; font-size:1.1em; cursor:pointer; transition: background-color 0.3s ease;}
+        .send-btn:hover {background-color:#1ea04d;}
+        #guestInfo {background:#e0f7fa; padding:15px; border-radius:10px; margin-bottom:20px; box-shadow:0 4px 10px rgba(0,0,0,0.1);}
+        #adminPanel {display:none; margin-top:40px; padding:10px; background:#b2dfdb; border-radius:8px; font-size:0.9em;}
+        #adminPanel input[type="file"], #adminPanel input[type="text"] {margin-top:5px; font-size:0.9em; padding: 5px; border-radius: 4px; border: 1px solid #ccc;}
+        #adminPanel select {font-size:0.9em;}
+        #adminPanel button {margin-top:5px; padding:5px 10px; border:none; border-radius:6px; cursor:pointer; font-size:0.9em;}
+        #adminPanel button.add {background-color:#00796b; color:#fff;}
+        #adminPanel button.clear {background-color:#e53935; color:#fff;}
+        #adminMsg {margin-top:8px; font-size:0.9em; color:#222;}
+        /* Fullscreen Modal Styles */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: hidden; background-color: rgba(0,0,0,0.9); align-items: center; justify-content: center; flex-direction: column; gap: 15px; }
+        .modal-content { margin: auto; display: block; max-width: 90%; max-height: 90%; }
+        .modal-close { position: absolute; top: 20px; right: 35px; color: #f1f1f1; font-size: 40px; font-weight: bold; transition: 0.3s; cursor: pointer; }
+        .modal-close:hover, .modal-close:focus { color: #bbb; text-decoration: none; cursor: pointer; }
+        .modal-prev, .modal-next { cursor: pointer; position: absolute; top: 50%; width: auto; padding: 16px; margin-top: -50px; color: white; font-weight: bold; font-size: 20px; user-select: none; }
+        .modal-next { right: 0; border-radius: 3px 0 0 3px; }
+        .modal-prev { left: 0; border-radius: 0 3px 3px 0; }
+        .modal-prev:hover, .modal-next:hover { background-color: rgba(0,0,0,0.8); }
+        .modal-reserve-btn { padding: 12px 25px; font-size: 1.1em; font-weight: bold; color: #fff; background-color: #00796b; border: none; border-radius: 8px; cursor: pointer; text-decoration: none; }
+        .modal-reserve-btn:hover { background-color: #004d40; }
+        /* Yeni Rezervasyon Formu Stilleri */
+        #specificReservationForm { display: none; background:#f8fcfb; padding:20px; border-radius:10px; border:1px solid #b2dfdb; margin-top: 20px; }
+        #specificReservationImage { object-fit: cover; max-width: 250px; height: auto; display: block; margin: 0 auto 15px auto; border-radius: 8px;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <select id="languageSelector" class="lang-selector">
+            <option value="tr">🇹🇷 Türkçe</option>
+            <option value="en">🇬🇧 English</option>
+            <option value="es">🇪🇸 Español</option>
+            <option value="fr">🇫🇷 Français</option>
+            <option value="ru">🇷🇺 Русский</option>
+            <option value="ar">🇸🇦 العربية</option>
+        </select>
+        
+        <div class="logo"><img src="https://via.placeholder.com/150x80.png?text=OTEL+LOGOSU" alt="Otel Logosu"></div>
+        <h1 id="title" data-lang-key="main_title">Otel Etkinlik ve Tur Rezervasyonları</h1>
+
+        <div class="event-cards">
+            <div class="card" data-event="tour_excursion"><span class="card-icon">⛵</span><span data-lang-key="card_tour">Tur & Gezi</span></div>
+            <div class="card" data-event="restaurant_reservation"><span class="card-icon">🍽️</span><span data-lang-key="card_restaurant">Restoran</span></div>
+            <div class="card" data-event="spa_massage"><span class="card-icon">💆‍♀️</span><span data-lang-key="card_spa">Spa & Masaj</span></div>
+            <div class="card" data-event="other_events"><span class="card-icon">🎉</span><span data-lang-key="card_other">Diğer</span></div>
+        </div>
+
+        <div id="eventDetail">
+            <h2 id="selectedEventTitle"></h2>
+            <div id="eventImages"></div>
+            <div id="guestInfo">
+                <label data-lang-key="label_name" for="name">Ad Soyad:</label>
+                <input type="text" id="name" data-lang-placeholder="ph_name" placeholder="Adınız Soyadınız" required>
+            </div>
+            <form id="reservationForm">
+                <input type="hidden" id="event" required>
+                <label data-lang-key="label_room" for="room">Oda No:</label>
+                <input type="text" id="room" data-lang-placeholder="ph_room" placeholder="Oda Numaranız" required>
+                
+                <label data-lang-key="label_date" for="date">Tarih:</label>
+                <input type="date" id="date" required>
+                
+                <label data-lang-key="label_time" for="time">Saat:</label>
+                <input type="time" id="time" required>
+                
+                <label data-lang-key="label_people" for="people">Kişi Sayısı:</label>
+                <input type="number" id="people" min="1" value="1" required>
+                
+                <label data-lang-key="label_note" for="note">Not (Opsiyonel):</label>
+                <textarea id="note" data-lang-placeholder="ph_note" placeholder="Özel istekleriniz, alerjileriniz veya notlarınız"></textarea>
+                
+                <a id="whatsappLink" href="#" target="_blank"><button type="button" class="send-btn" data-lang-key="btn_send_whatsapp">WhatsApp ile Gönder</button></a>
+            </form>
+        </div>
+
+        <div id="specificReservationForm">
+            <h2 id="specificReservationTitle" data-lang-key="specific_title">Seçilen Ürün için Rezervasyon</h2>
+            <img id="specificReservationImage">
+            <p><strong data-lang-key="specific_catalog_name">Katalog Adı:</strong> <span id="specificPhotoName"></span></p>
+            <div id="specificGuestInfo">
+                <label data-lang-key="label_name" for="specificName">Ad Soyad:</label>
+                <input type="text" id="specificName" data-lang-placeholder="ph_name" placeholder="Adınız Soyadınız" required>
+            </div>
+            <form id="specificForm">
+                <input type="hidden" id="specificEvent" required>
+                <input type="hidden" id="specificPhotoNameHidden" required>
+
+                <label data-lang-key="label_room" for="specificRoom">Oda No:</label>
+                <input type="text" id="specificRoom" data-lang-placeholder="ph_room" placeholder="Oda Numaranız" required>
+
+                <label data-lang-key="label_date" for="specificDate">Tarih:</label>
+                <input type="date" id="specificDate" required>
+
+                <label data-lang-key="label_time" for="specificTime">Saat:</label>
+                <input type="time" id="specificTime" required>
+
+                <label data-lang-key="label_people" for="specificPeople">Kişi Sayısı:</label>
+                <input type="number" id="specificPeople" min="1" value="1" required>
+
+                <label data-lang-key="label_note" for="specificNote">Not (Opsiyonel):</label>
+                <textarea id="specificNote" data-lang-placeholder="ph_note" placeholder="Özel istekleriniz, alerjileriniz veya notlarınız"></textarea>
+                
+                <a id="specificWhatsappLink" href="#" target="_blank"><button type="button" class="send-btn" data-lang-key="btn_send_whatsapp">WhatsApp ile Gönder</button></a>
+            </form>
+        </div>
+
+        <div id="adminPanel">
+            <strong data-lang-key="admin_title">Admin Katalog Yönetimi:</strong><br>
+            <span data-lang-key="admin_select_event">Etkinlik Seç:</span> <select id="adminEventSelect">
+                <option value="tour_excursion" data-lang-key="card_tour">Tur ve Gezi</option>
+                <option value="restaurant_reservation" data-lang-key="card_restaurant">Restoran Rezervasyonu</option>
+                <option value="spa_massage" data-lang-key="card_spa">Spa & Masaj</option>
+                <option value="other_events" data-lang-key="card_other">Diğer Etkinlikler</option>
+            </select><br>
+            <span data-lang-key="admin_catalog_name">Katalog Adı:</span> <input type="text" id="adminPhotoName" data-lang-placeholder="ph_catalog_name" placeholder="Örn: VIP Tekne Turu" required><br>
+            <span data-lang-key="admin_select_photo">Fotoğraf Seç:</span> <input type="file" id="adminUpload" accept="image/*" multiple><br>
+            <button class="add" id="adminAdd" type="button" data-lang-key="btn_add">Ekle</button>
+            <button class="clear" id="adminClear" type="button" data-lang-key="btn_clear">Temizle</button>
+            <div id="adminMsg"></div>
+        </div>
+    </div>
+
+    <div id="imageModal" class="modal">
+        <span class="modal-close">&times;</span>
+        <img class="modal-content" id="modalImage">
+        <a class="modal-prev">&#10094;</a>
+        <a class="modal-next">&#10095;</a>
+        <a id="modalReserveBtn" class="modal-reserve-btn" data-lang-key="btn_reserve">Rezervasyon Yap</a>
+    </div>
+
+    <script>
+        const phoneNumber = '905496383600'; 
+        let currentEvent = '';
+        let currentLang = 'tr'; 
+
+        // --- DİL SÖZLÜĞÜ (TRANSLATIONS) ---
+        const translations = {
+            tr: {
+                main_title: "Otel Etkinlik ve Tur Rezervasyonları", card_tour: "Tur & Gezi", card_restaurant: "Restoran", card_spa: "Spa & Masaj", card_other: "Diğer",
+                specific_title: "Seçilen Ürün için Rezervasyon", specific_catalog_name: "Katalog Adı:",
+                btn_send_whatsapp: "WhatsApp ile Gönder", btn_reserve: "Rezervasyon Yap",
+                label_name: "Ad Soyad:", label_room: "Oda No:", label_date: "Tarih:", label_time: "Saat:", label_people: "Kişi Sayısı:", label_note: "Not (Opsiyonel):",
+                ph_name: "Adınız Soyadınız", ph_room: "Oda Numaranız", ph_note: "Özel istekleriniz, alerjileriniz veya notlarınız", ph_catalog_name: "Örn: VIP Tekne Turu",
+                admin_title: "Admin Katalog Yönetimi:", admin_select_event: "Etkinlik Seç:", admin_catalog_name: "Katalog Adı:", admin_select_photo: "Fotoğraf Seç:",
+                btn_add: "Ekle", btn_clear: "Temizle", msg_no_catalog: "Bu etkinlik için henüz bir katalog görseli yüklenmemiştir.",
+                wa_hello: "Merhaba", wa_event: "Etkinlik", wa_catalog_name: "Katalog Adı", wa_name: "Ad Soyad", wa_room: "Oda No", wa_date: "Tarih", wa_time: "Saat", wa_people: "Kişi Sayısı", wa_note: "Not"
+            },
+            en: {
+                main_title: "Hotel Activity and Tour Reservations", card_tour: "Tour & Excursion", card_restaurant: "Restaurant", card_spa: "Spa & Massage", card_other: "Other",
+                specific_title: "Reservation for Selected Product", specific_catalog_name: "Catalog Name:",
+                btn_send_whatsapp: "Send via WhatsApp", btn_reserve: "Make Reservation",
+                label_name: "Name Surname:", label_room: "Room No:", label_date: "Date:", label_time: "Time:", label_people: "Number of People:", label_note: "Note (Optional):",
+                ph_name: "Your Name Surname", ph_room: "Your Room Number", ph_note: "Special requests, allergies, or notes", ph_catalog_name: "Ex: VIP Boat Tour",
+                admin_title: "Admin Catalog Management:", admin_select_event: "Select Event:", admin_catalog_name: "Catalog Name:", admin_select_photo: "Select Photo:",
+                btn_add: "Add", btn_clear: "Clear", msg_no_catalog: "No catalog image has been uploaded for this activity yet.",
+                wa_hello: "Hello", wa_event: "Activity", wa_catalog_name: "Catalog Name", wa_name: "Name Surname", wa_room: "Room No", wa_date: "Date", wa_time: "Time", wa_people: "Number of People", wa_note: "Note"
+            },
+            es: {
+                main_title: "Reservas de Actividades y Tours del Hotel", card_tour: "Tour y Excursión", card_restaurant: "Restaurante", card_spa: "Spa y Masaje", card_other: "Otros",
+                specific_title: "Reserva para el Producto Seleccionado", specific_catalog_name: "Nombre del Catálogo:",
+                btn_send_whatsapp: "Enviar por WhatsApp", btn_reserve: "Hacer Reserva",
+                label_name: "Nombre Apellido:", label_room: "Número de Habitación:", label_date: "Fecha:", label_time: "Hora:", label_people: "Número de Personas:", label_note: "Nota (Opcional):",
+                ph_name: "Tu Nombre Apellido", ph_room: "Tu Número de Habitación", ph_note: "Solicitudes especiales, alergias o notas", ph_catalog_name: "Ej: Tour en Barco VIP",
+                admin_title: "Gestión de Catálogo de Administrador:", admin_select_event: "Seleccionar Evento:", admin_catalog_name: "Nombre del Catálogo:", admin_select_photo: "Seleccionar Foto:",
+                btn_add: "Añadir", btn_clear: "Limpiar", msg_no_catalog: "No se ha subido ninguna imagen de catálogo para esta actividad todavía.",
+                wa_hello: "Hola", wa_event: "Evento", wa_catalog_name: "Nombre del Catálogo", wa_name: "Nombre Apellido", wa_room: "Número de Habitación", wa_date: "Fecha", wa_time: "Hora", wa_people: "Número de Personas", wa_note: "Nota"
+            },
+            fr: {
+                main_title: "Réservations d'Activités et Excursions de l'Hôtel", card_tour: "Visite et Excursion", card_restaurant: "Restaurant", card_spa: "Spa et Massage", card_other: "Autres",
+                specific_title: "Réservation pour le Produit Sélectionné", specific_catalog_name: "Nom du Catalogue:",
+                btn_send_whatsapp: "Envoyer via WhatsApp", btn_reserve: "Faire une Réservation",
+                label_name: "Nom Prénom:", label_room: "Numéro de Chambre:", label_date: "Date:", label_time: "Heure:", label_people: "Nombre de Personnes:", label_note: "Note (Optionnel):",
+                ph_name: "Votre Nom Prénom", ph_room: "Votre Numéro de Chambre", ph_note: "Demandes spéciales, allergies ou notes", ph_catalog_name: "Ex: Excursion en Bateau VIP",
+                admin_title: "Gestion de Catalogue Admin:", admin_select_event: "Sélectionner un Événement:", admin_catalog_name: "Nom du Catalogue:", admin_select_photo: "Sélectionner Photo:",
+                btn_add: "Ajouter", btn_clear: "Effacer", msg_no_catalog: "Aucune image de catalogue n'a été téléchargée pour cette activité.",
+                wa_hello: "Bonjour", wa_event: "Événement", wa_catalog_name: "Nom du Catalogue", wa_name: "Nom Prénom", wa_room: "Numéro de Chambre", wa_date: "Date", wa_time: "Heure", wa_people: "Nombre de Personnes", wa_note: "Note"
+            },
+            ru: {
+                main_title: "Бронирование туров и мероприятий в отеле", card_tour: "Тур и Экскурсия", card_restaurant: "Ресторан", card_spa: "СПА и Массаж", card_other: "Другое",
+                specific_title: "Бронирование выбранного продукта", specific_catalog_name: "Название каталога:",
+                btn_send_whatsapp: "Отправить через WhatsApp", btn_reserve: "Сделать бронь",
+                label_name: "Имя Фамилия:", label_room: "Номер комнаты:", label_date: "Дата:", label_time: "Время:", label_people: "Количество человек:", label_note: "Примечание (Необязательно):",
+                ph_name: "Ваше Имя Фамилия", ph_room: "Ваш Номер комнаты", ph_note: "Особые пожелания, аллергии или примечания", ph_catalog_name: "Пример: VIP-тур на лодке",
+                admin_title: "Управление каталогом администратора:", admin_select_event: "Выбрать мероприятие:", admin_catalog_name: "Название каталога:", admin_select_photo: "Выбрать фото:",
+                btn_add: "Добавить", btn_clear: "Очистить", msg_no_catalog: "Для этого мероприятия каталог еще не загружен.",
+                wa_hello: "Здравствуйте", wa_event: "Мероприятие", wa_catalog_name: "Название каталога", wa_name: "Имя Фамилия", wa_room: "Номер комнаты", wa_date: "Дата", wa_time: "Время", wa_people: "Количество человек", wa_note: "Примечание"
+            },
+            ar: {
+                main_title: "حجوزات الجولات والأنشطة الفندقية", card_tour: "جولة ورحلة", card_restaurant: "مطعم", card_spa: "سبا ومساج", card_other: "أخرى",
+                specific_title: "حجز المنتج المحدد", specific_catalog_name: "اسم الكتالوج:",
+                btn_send_whatsapp: "إرسال عبر الواتساب", btn_reserve: "قم بالحجز",
+                label_name: "الاسم واللقب:", label_room: "رقم الغرفة:", label_date: "التاريخ:", label_time: "الوقت:", label_people: "عدد الأشخاص:", label_note: "ملاحظة (اختياري):",
+                ph_name: "اسمك ولقبك", ph_room: "رقم غرفتك", ph_note: "طلبات خاصة، حساسيات، أو ملاحظات", ph_catalog_name: "مثال: جولة القارب VIP",
+                admin_title: "إدارة كتالوج المشرف:", admin_select_event: "اختر النشاط:", admin_catalog_name: "اسم الكتالوج:", admin_select_photo: "اختر الصورة:",
+                btn_add: "إضافة", btn_clear: "مسح", msg_no_catalog: "لم يتم تحميل أي صورة كتالوج لهذا النشاط بعد.",
+                wa_hello: "مرحباً", wa_event: "النشاط", wa_catalog_name: "اسم الكتالوج", wa_name: "الاسم واللقب", wa_room: "رقم الغرفة", wa_date: "التاريخ", wa_time: "الوقت", wa_people: "عدد الأشخاص", wa_note: "ملاحظة"
+            }
+        };
+        // --- DİL SÖZLÜĞÜ SONU ---
+
+        // --- IndexedDB Setup ---
+        const dbName = 'OtelEventsDB';
+        const dbVersion = 2; 
+        let db;
+
+        function openDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(dbName, dbVersion);
+                request.onerror = e => reject(e);
+                request.onsuccess = e => { db = e.target.result; resolve(db); };
+                request.onupgradeneeded = e => {
+                    db = e.target.result;
+                    if (!db.objectStoreNames.contains('eventImages')) {
+                        const store = db.createObjectStore('eventImages', { keyPath: 'id', autoIncrement: true });
+                        store.createIndex('eventName', 'eventName', { unique: false });
+                    }
+                };
+            });
+        }
+
+        function addImages(eventName, photoName, dataUrls) {
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction('eventImages', 'readwrite');
+                const store = tx.objectStore('eventImages');
+                dataUrls.forEach(url => store.add({ eventName: eventName, photoName: photoName, data: url }));
+                tx.oncomplete = () => resolve();
+                tx.onerror = e => reject(e);
+            });
+        }
+        
+        function getImages(eventName) {
+             return new Promise((resolve, reject) => {
+                const tx = db.transaction('eventImages', 'readonly');
+                const store = tx.objectStore('eventImages');
+                const index = store.index('eventName');
+                const request = index.getAll(eventName);
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = e => reject(e);
+            });
+        }
+
+        function deleteImage(id) {
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction('eventImages', 'readwrite');
+                const store = tx.objectStore('eventImages');
+                store.delete(id);
+                tx.oncomplete = () => resolve();
+                tx.onerror = e => reject(e);
+            });
+        }
+        // --- IndexedDB Son ---
+
+        // --- DİL YÖNETİMİ (setLanguage) ---
+        const langSelector = document.getElementById('languageSelector');
+        const eventCardKeyMap = {
+            "tour_excursion": "card_tour",
+            "restaurant_reservation": "card_restaurant",
+            "spa_massage": "card_spa",
+            "other_events": "card_other"
+        };
+        
+        function translateEventName(key) {
+             return translations[currentLang][eventCardKeyMap[key]] || key;
+        }
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            const t = translations[lang];
+
+            // 1. data-lang-key kullanan elementleri çevir
+            document.querySelectorAll('[data-lang-key]').forEach(element => {
+                const key = element.getAttribute('data-lang-key');
+                if (t[key]) {
+                    // Label'ları sadece metinle güncelle
+                    if (element.tagName === 'LABEL') {
+                        element.textContent = t[key];
+                    } else {
+                        element.textContent = t[key];
+                    }
+                }
+            });
+
+
+            // 2. Placeholder'ları çevir
+            document.querySelectorAll('[data-lang-placeholder]').forEach(element => {
+                const key = element.getAttribute('data-lang-placeholder');
+                if (t[key]) {
+                    element.placeholder = t[key];
+                }
+            });
+            
+            // 3. Admin select option'larını çevir
+            document.querySelectorAll('#adminEventSelect option').forEach(option => {
+                const key = option.getAttribute('data-lang-key');
+                if (t[key]) {
+                    option.textContent = t[key];
+                }
+            });
+
+            // 4. WhatsApp linklerini mevcut verilerle hemen güncelle
+            updateWhatsappLink();
+            updateSpecificLink();
+            
+            // 5. Etkinlik seçiliyse başlığı tekrar çevir ve katalog mesajını güncelle
+            if (currentEvent) {
+                const eventNameKey = eventCardKeyMap[currentEvent];
+                document.getElementById('selectedEventTitle').textContent = t[eventNameKey] || currentEvent;
+                loadImages(currentEvent);
+            }
+
+            // 6. Arapça için metin yönü ayarı (RTL)
+            const isRTL = lang === 'ar';
+            document.body.style.direction = isRTL ? 'rtl' : 'ltr';
+            document.querySelectorAll('label').forEach(label => label.style.textAlign = isRTL ? 'right' : 'left');
+        }
+        
+        // --- DOM Elementleri ve Olay Yönetimi ---
+        const cards = document.querySelectorAll('.card');
+        const eventDetail = document.getElementById('eventDetail');
+        const waLink = document.getElementById('whatsappLink');
+        const specificWhatsappLink = document.getElementById('specificWhatsappLink');
+        const specificReservationForm = document.getElementById('specificReservationForm');
+        const specificPhotoNameHidden = document.getElementById('specificPhotoNameHidden'); 
+
+        let currentImages = []; 
+        let currentEventData = []; 
+        let currentImageIndex = 0;
+
+        // --- WhatsApp Link Oluşturma (Genel Form) ---
+        function updateWhatsappLink() {
+            const t = translations[currentLang];
+            const eventNameKey = eventCardKeyMap[currentEvent];
+            const translatedEventName = t[eventNameKey] || currentEvent || 'Bilinmiyor';
+
+            // Misafirin Girdiği Tüm Bilgileri Al 
+            const name = document.getElementById('name').value.trim() || '-';
+            const room = document.getElementById('room').value.trim() || '-';
+            const date = document.getElementById('date').value.trim() || '-';
+            const time = document.getElementById('time').value.trim() || '-';
+            const people = document.getElementById('people').value.trim() || '1';
+            const note = document.getElementById('note').value.trim() || '-';
+
+            // Mesaj Metnini Oluştur (YILDIZLAR KALDIRILDI)
+            const rawMessageText = 
+                `${t.wa_hello},\n\n` +
+                `${t.wa_event}: ${translatedEventName}\n` +
+                `${t.wa_name}: ${name}\n` +
+                `${t.wa_room}: ${room}\n` +
+                `${t.wa_date}: ${date}\n` +
+                `${t.wa_time}: ${time}\n` +
+                `${t.wa_people}: ${people}\n` +
+                `${t.wa_note}: ${note}`;
+                
+            // Tüm metni tek seferde URL kodlama ile düzgün bir şekilde gönder
+            const encodedMessage = encodeURIComponent(rawMessageText);
+            waLink.href = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+        }
+
+        // --- WhatsApp Link Oluşturma (Ürüne Özel Form) ---
+        function updateSpecificLink() {
+            const t = translations[currentLang];
+            const eventId = document.getElementById('specificEvent').value;
+            const eventNameKey = eventCardKeyMap[eventId];
+            const translatedEventName = t[eventNameKey] || eventId || 'Bilinmiyor';
+            
+            // Misafirin Girdiği Tüm Bilgileri Al
+            const name = document.getElementById('specificName').value.trim() || '-';
+            const room = document.getElementById('specificRoom').value.trim() || '-';
+            const date = document.getElementById('specificDate').value.trim() || '-';
+            const time = document.getElementById('specificTime').value.trim() || '-';
+            const people = document.getElementById('specificPeople').value.trim() || '1';
+            const note = document.getElementById('specificNote').value.trim() || '-';
+            const photoName = specificPhotoNameHidden.value.trim() || '-'; 
+
+            // Mesaj Metnini Oluştur (YILDIZLAR KALDIRILDI)
+            const rawMessageText = 
+                `${t.wa_hello},\n\n` +
+                `${t.wa_event}: ${translatedEventName}\n` +
+                `${t.wa_catalog_name}: ${photoName}\n` +
+                `${t.wa_name}: ${name}\n` +
+                `${t.wa_room}: ${room}\n` +
+                `${t.wa_date}: ${date}\n` +
+                `${t.wa_time}: ${time}\n` +
+                `${t.wa_people}: ${people}\n` +
+                `${t.wa_note}: ${note}`;
+                
+            // Tüm metni tek seferde URL kodlama ile düzgün bir şekilde gönder
+            const encodedMessage = encodeURIComponent(rawMessageText);
+            specificWhatsappLink.href = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+        }
+
+        // --- Input Dinleyicileri ---
+        // Tüm ilgili input ve textarea'ları dinle.
+        document.querySelectorAll('input, textarea').forEach(input => {
+            if (input.closest('#reservationForm, #specificForm, #guestInfo, #specificGuestInfo')) {
+                input.addEventListener('input', () => {
+                    updateWhatsappLink();
+                    updateSpecificLink();
+                });
+            }
+        });
+
+
+        // --- Diğer Olay Fonksiyonları (LoadImages, openModal vb.) ---
+        async function loadImages(eventName) {
+            const eventImagesContainer = document.getElementById('eventImages');
+            const adminMsg = document.getElementById('adminMsg');
+            eventImagesContainer.innerHTML = '';
+            const imgs = await getImages(eventName);
+            currentEventData = imgs; 
+            currentImages = imgs.map(item => item.data); 
+
+            if (imgs.length === 0) {
+                eventImagesContainer.innerHTML = `<p style="text-align:center; color:#e53935;">${translations[currentLang].msg_no_catalog}</p>`;
+                return;
+            }
+            
+            imgs.forEach((item, index) => {
+                const wrapper = document.createElement('div');
+                const img = document.createElement('img');
+                img.src = item.data;
+                img.alt = item.photoName || translateEventName(eventName) + ' ID: ' + item.id;
+                img.loading = 'lazy';
+                
+                img.addEventListener('click', () => {
+                    currentImageIndex = index;
+                    openModal(item.data, item.photoName, item.eventName); 
+                });
+
+                const delBtn = document.createElement('button');
+                delBtn.textContent = '❌';
+                delBtn.title = 'Resmi Sil (ID:' + item.id + ')';
+                delBtn.className = 'delete-btn';
+                
+                delBtn.addEventListener('click', async e => {
+                    e.stopPropagation(); 
+                    if (confirm(`Do you want to delete ${item.photoName || 'this image'}?`)) {
+                        await deleteImage(item.id);
+                        loadImages(eventName);
+                        adminMsg.textContent = `'${item.photoName || 'Adsız Resim'}' deleted.`;
+                    }
+                });
+
+                wrapper.appendChild(img);
+                wrapper.appendChild(delBtn);
+                eventImagesContainer.appendChild(wrapper);
+            });
+        }
+        
+        function openModal(src, photoName, eventName) { 
+            const modal = document.getElementById('imageModal');
+            modal.style.display = 'flex';
+            document.getElementById('modalImage').src = src;
+            document.getElementById('modalReserveBtn').setAttribute('data-photo-name', photoName); 
+            document.getElementById('modalReserveBtn').setAttribute('data-event-name', eventName);
+        }
+
+        document.getElementsByClassName('modal-close')[0].onclick = () => { document.getElementById('imageModal').style.display = 'none'; };
+
+        function updateModalContent() {
+            const item = currentEventData[currentImageIndex];
+            document.getElementById('modalImage').src = item.data;
+            document.getElementById('modalReserveBtn').setAttribute('data-photo-name', item.photoName);
+            document.getElementById('modalReserveBtn').setAttribute('data-event-name', item.eventName);
+        }
+
+        document.getElementsByClassName('modal-prev')[0].onclick = () => {
+            currentImageIndex = (currentImageIndex - 1 + currentImages.length) % currentImages.length;
+            updateModalContent();
+        };
+
+        document.getElementsByClassName('modal-next')[0].onclick = () => {
+            currentImageIndex = (currentImageIndex + 1) % currentImages.length;
+            updateModalContent();
+        };
+
+
+        document.getElementById('modalReserveBtn').onclick = () => {
+            const modal = document.getElementById('imageModal');
+            const specificPhotoNameDisplay = document.getElementById('specificPhotoName'); 
+            const specificReservationImage = document.getElementById('specificReservationImage');
+            
+            modal.style.display = 'none';
+            eventDetail.style.display = 'none';
+            specificReservationForm.style.display = 'block';
+            
+            // Genel formdaki Ad Soyad bilgisini özel forma taşı
+            document.getElementById('specificName').value = document.getElementById('name').value;
+
+            specificReservationForm.scrollIntoView({ behavior: 'smooth' });
+
+            const selectedEvent = document.getElementById('modalReserveBtn').getAttribute('data-event-name');
+            const selectedPhotoName = document.getElementById('modalReserveBtn').getAttribute('data-photo-name'); 
+
+            const selectedPhotoData = currentEventData.find(item => item.photoName === selectedPhotoName && item.eventName === selectedEvent);
+            if(selectedPhotoData) {
+                specificReservationImage.src = selectedPhotoData.data;
+            }
+            
+            specificPhotoNameDisplay.textContent = selectedPhotoName; 
+
+            document.getElementById('specificEvent').value = selectedEvent;
+            specificPhotoNameHidden.value = selectedPhotoName; 
+
+            updateSpecificLink(); 
+        };
+        
+        cards.forEach(card => {
+            card.addEventListener('click', () => {
+                currentEvent = card.getAttribute('data-event');
+                const eventNameKey = eventCardKeyMap[currentEvent];
+                const eventTitle = translations[currentLang][eventNameKey] || currentEvent; 
+
+                document.getElementById('selectedEventTitle').textContent = eventTitle;
+                document.getElementById('event').value = currentEvent;
+                
+                specificReservationForm.style.display = 'none';
+                eventDetail.style.display = 'block';
+                eventDetail.scrollIntoView({ behavior: 'smooth' });
+                
+                loadImages(currentEvent);
+                updateWhatsappLink(); 
+            });
+        });
+        
+        // Admin İşlemleri (Değişmedi)
+        const ADMIN_PASSWORD = 'otel123'; 
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key.toLowerCase() === 'a') {
+                e.preventDefault();
+                const pass = prompt('Admin şifresini girin:');
+                if (pass === ADMIN_PASSWORD) {
+                    document.getElementById('adminPanel').style.display = 'block';
+                    alert('Admin girişi başarılı!');
+                } else if (pass !== null) {
+                    alert('Hatalı şifre!');
+                }
+            }
+        });
+
+        // Dil seçici olay dinleyicisi
+        langSelector.addEventListener('change', (e) => {
+            setLanguage(e.target.value);
+            localStorage.setItem('appLang', e.target.value);
+        });
+
+        // --- BAŞLANGIÇ ---
+        // Uygulama başladığında dili ayarla
+        const savedLang = localStorage.getItem('appLang') || 'tr';
+        langSelector.value = savedLang;
+        setLanguage(savedLang); 
+        
+        // Veritabanı başlangıcı
+        openDB().then(() => console.log('IndexedDB hazır')).catch(err => console.error('IndexedDB hatası:', err));
+        
+        // İlk yüklemede ve dil ayarından sonra linkleri güncelle
+        updateWhatsappLink();
+        updateSpecificLink();
+    </script>
+</body>
+</html>
