@@ -1,4 +1,3 @@
-[otel_rezervasyon.html](https://github.com/user-attachments/files/23544835/otel_rezervasyon.html)
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -6,64 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Otel Etkinlik Rezervasyonu</title>
     <style>
-        /* GENEL STİLLER */
         body {font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#f4f7f6; color:#333; margin:0; padding:20px;}
         .container {max-width:900px; margin:auto; background:#fff; padding:25px; border-radius:12px; box-shadow:0 8px 25px rgba(0,0,0,0.1); position: relative;} 
         h1 {text-align:center; color:#004d40; font-size:2em; margin-bottom:20px;}
         .logo {text-align:center; margin-bottom:20px;}
         .logo img {max-width:150px; height:auto;}
-        
-        /* DİL SEÇİCİ STİLİ */
         .lang-selector { position: absolute; top: 15px; right: 25px; z-index: 10; padding: 5px 10px; border-radius: 6px; border: 1px solid #ccc; background-color: #fff; cursor: pointer; font-size: 0.9em;}
-        
-        /* KARTLAR */
         .event-cards {display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:15px; margin-bottom:25px;}
         .card {background:linear-gradient(135deg,#e0f2f1,#b2dfdb); border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.1); cursor:pointer; transition: transform 0.3s ease, box-shadow 0.3s ease; text-align:center; padding:15px; display:flex; flex-direction:column; justify-content:center; align-items:center;}
         .card:hover {transform:translateY(-5px); box-shadow:0 6px 20px rgba(0,0,0,0.15);}
         .card-icon {font-size:3em; margin-bottom:10px; color:#00796b;}
         .card span {font-size:1.1em; font-weight:bold; color:#004d40;}
-        
-        /* REZERVASYON FORMLARI (GENEL & ÖZEL) */
-        #eventDetail, #specificReservationForm {display:none; background:#f8fcfb; padding:20px; border-radius:10px; border:1px solid #b2dfdb; margin-top: 20px;}
+        #eventDetail {display:none; background:#f8fcfb; padding:20px; border-radius:10px; border:1px solid #b2dfdb;}
         #selectedEventTitle {color:#004d40; margin-bottom:15px; text-align:center;}
-        #guestInfo, #specificGuestInfo {background:#e0f7fa; padding:15px; border-radius:10px; margin-bottom:20px; box-shadow:0 4px 10px rgba(0,0,0,0.1);}
-        
-        /* FORM INPUTLARI */
-        form label {display:block; margin-top:15px; font-weight:bold; color:#555;}
-        form label + input, form label + textarea {
-            display: block; 
-            margin-top: 8px; 
-        }
-        form input[type="text"], form input[type="date"], form input[type="number"], form input[type="time"], form textarea {width:100%; padding:12px; margin-top:8px; border-radius:8px; border:1px solid #ccc; box-sizing:border-box; transition:border-color 0.3s;}
-        form input:focus, form textarea:focus {border-color:#00796b; outline:none;}
-
-        /* WHATSAPP BUTONU */
-        .send-btn {margin-top:20px; padding:12px; background:#25D366; color:#fff; border:none; border-radius:8px; width:100%; font-size:1.1em; cursor:pointer; transition: background-color 0.3s ease;}
-        .send-btn:hover {background-color:#1ea04d;}
-        #whatsappLink button, #specificWhatsappLink button { display: block; width: 100%; }
-
-        /* KATALOG GÖRSELLERİ */
         #eventImages {display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-bottom:20px; padding-bottom:10px;}
         #eventImages div {position:relative; display:inline-block;}
-        #eventImages img { max-width: 150px; height: 100px; object-fit: cover; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1); cursor: pointer; }
-        .delete-btn {position:absolute; top:2px; right:2px; background:rgba(0,0,0,0.6); color:rgba(255, 255, 255, 0.8); border:none; border-radius:50%; cursor:pointer; font-size:0.8em; padding:2px 6px; line-height: 1;}
-        
-        /* ÖZEL REZERVASYON FORMU RESMİ */
-        #specificReservationImage { object-fit: cover; max-width: 250px; height: auto; display: block; margin: 0 auto 15px auto; border-radius: 8px;}
-        #specificPhotoName { font-weight: normal; color: #00796b; }
-
-
-        /* ADMIN PANELİ */
+        #eventImages img { max-width: 800px; width: 100%; height: auto; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1); cursor: pointer; }
+        .delete-btn {position:absolute; top:2px; right:2px; background:rgba(0,0,0,0.6); color:#fff; border:none; border-radius:50%; cursor:pointer; font-size:0.8em; padding:2px 6px;}
+        form label {display:block; margin-top:15px; font-weight:bold; color:#555;}
+        form input[type="text"], form input[type="date"], form input[type="number"], form input[type="time"], form textarea {width:100%; padding:12px; margin-top:8px; border-radius:8px; border:1px solid #ccc; box-sizing:border-box; transition:border-color 0.3s;}
+        form input:focus, form textarea:focus {border-color:#00796b; outline:none;}
+        .send-btn {margin-top:20px; padding:12px; background:#25D366; color:#fff; border:none; border-radius:8px; width:100%; font-size:1.1em; cursor:pointer; transition: background-color 0.3s ease;}
+        .send-btn:hover {background-color:#1ea04d;}
+        #guestInfo {background:#e0f7fa; padding:15px; border-radius:10px; margin-bottom:20px; box-shadow:0 4px 10px rgba(0,0,0,0.1);}
         #adminPanel {display:none; margin-top:40px; padding:10px; background:#b2dfdb; border-radius:8px; font-size:0.9em;}
-        #adminPanel input[type="file"], #adminPanel input[type="text"], #adminPanel select {margin-top:5px; font-size:0.9em; padding: 5px; border-radius: 4px; border: 1px solid #ccc; width: calc(100% - 12px);}
+        #adminPanel input[type="file"], #adminPanel input[type="text"] {margin-top:5px; font-size:0.9em; padding: 5px; border-radius: 4px; border: 1px solid #ccc;}
+        #adminPanel select {font-size:0.9em;}
         #adminPanel button {margin-top:5px; padding:5px 10px; border:none; border-radius:6px; cursor:pointer; font-size:0.9em;}
         #adminPanel button.add {background-color:#00796b; color:#fff;}
         #adminPanel button.clear {background-color:#e53935; color:#fff;}
         #adminMsg {margin-top:8px; font-size:0.9em; color:#222;}
-        
-        /* FULLSCREEN MODAL STİLLERİ */
+        /* Fullscreen Modal Styles */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: hidden; background-color: rgba(0,0,0,0.9); align-items: center; justify-content: center; flex-direction: column; gap: 15px; }
-        .modal-content { margin: auto; display: block; max-width: 90%; max-height: 90%; object-fit: contain; }
+        .modal-content { margin: auto; display: block; max-width: 90%; max-height: 90%; }
         .modal-close { position: absolute; top: 20px; right: 35px; color: #f1f1f1; font-size: 40px; font-weight: bold; transition: 0.3s; cursor: pointer; }
         .modal-close:hover, .modal-close:focus { color: #bbb; text-decoration: none; cursor: pointer; }
         .modal-prev, .modal-next { cursor: pointer; position: absolute; top: 50%; width: auto; padding: 16px; margin-top: -50px; color: white; font-weight: bold; font-size: 20px; user-select: none; }
@@ -72,9 +46,9 @@
         .modal-prev:hover, .modal-next:hover { background-color: rgba(0,0,0,0.8); }
         .modal-reserve-btn { padding: 12px 25px; font-size: 1.1em; font-weight: bold; color: #fff; background-color: #00796b; border: none; border-radius: 8px; cursor: pointer; text-decoration: none; }
         .modal-reserve-btn:hover { background-color: #004d40; }
-        
-        /* RTL DÜZELTMELERİ */
-        [style*="direction: rtl"] .lang-selector { left: 25px; right: auto; }
+        /* Yeni Rezervasyon Formu Stilleri */
+        #specificReservationForm { display: none; background:#f8fcfb; padding:20px; border-radius:10px; border:1px solid #b2dfdb; margin-top: 20px; }
+        #specificReservationImage { object-fit: cover; max-width: 250px; height: auto; display: block; margin: 0 auto 15px auto; border-radius: 8px;}
     </style>
 </head>
 <body>
@@ -107,7 +81,6 @@
             </div>
             <form id="reservationForm">
                 <input type="hidden" id="event" required>
-                
                 <label data-lang-key="label_room" for="room">Oda No:</label>
                 <input type="text" id="room" data-lang-placeholder="ph_room" placeholder="Oda Numaranız" required>
                 
@@ -187,9 +160,6 @@
         let currentEvent = '';
         let currentLang = 'tr'; 
 
-        // Yeni Satır karakteri (Sizin çalışan kodunuzdaki yapı)
-        const NL = '%0A'; 
-
         // --- DİL SÖZLÜĞÜ (TRANSLATIONS) ---
         const translations = {
             tr: {
@@ -200,16 +170,7 @@
                 ph_name: "Adınız Soyadınız", ph_room: "Oda Numaranız", ph_note: "Özel istekleriniz, alerjileriniz veya notlarınız", ph_catalog_name: "Örn: VIP Tekne Turu",
                 admin_title: "Admin Katalog Yönetimi:", admin_select_event: "Etkinlik Seç:", admin_catalog_name: "Katalog Adı:", admin_select_photo: "Fotoğraf Seç:",
                 btn_add: "Ekle", btn_clear: "Temizle", msg_no_catalog: "Bu etkinlik için henüz bir katalog görseli yüklenmemiştir.",
-                // WhatsApp için Alt Alta format başlıkları
-                wa_subject: "YENİ REZERVASYON TALEBİ", 
-                wa_event: "Etkinlik Adı", 
-                wa_catalog_name: "Katalog Adı", 
-                wa_name: "Ad Soyad", 
-                wa_room: "Oda No", 
-                wa_date: "Tarih", 
-                wa_time: "Saat", 
-                wa_people: "Kişi Sayısı", 
-                wa_note: "Not"
+                wa_hello: "Merhaba", wa_event: "Etkinlik", wa_catalog_name: "Katalog Adı", wa_name: "Ad Soyad", wa_room: "Oda No", wa_date: "Tarih", wa_time: "Saat", wa_people: "Kişi Sayısı", wa_note: "Not"
             },
             en: {
                 main_title: "Hotel Activity and Tour Reservations", card_tour: "Tour & Excursion", card_restaurant: "Restaurant", card_spa: "Spa & Massage", card_other: "Other",
@@ -219,8 +180,7 @@
                 ph_name: "Your Name Surname", ph_room: "Your Room Number", ph_note: "Special requests, allergies, or notes", ph_catalog_name: "Ex: VIP Boat Tour",
                 admin_title: "Admin Catalog Management:", admin_select_event: "Select Event:", admin_catalog_name: "Catalog Name:", admin_select_photo: "Select Photo:",
                 btn_add: "Add", btn_clear: "Clear", msg_no_catalog: "No catalog image has been uploaded for this activity yet.",
-                wa_subject: "NEW RESERVATION REQUEST", 
-                wa_event: "Activity Name", wa_catalog_name: "Catalog Name", wa_name: "Name Surname", wa_room: "Room No", wa_date: "Date", wa_time: "Time", wa_people: "Number of People", wa_note: "Note"
+                wa_hello: "Hello", wa_event: "Activity", wa_catalog_name: "Catalog Name", wa_name: "Name Surname", wa_room: "Room No", wa_date: "Date", wa_time: "Time", wa_people: "Number of People", wa_note: "Note"
             },
             es: {
                 main_title: "Reservas de Actividades y Tours del Hotel", card_tour: "Tour y Excursión", card_restaurant: "Restaurante", card_spa: "Spa y Masaje", card_other: "Otros",
@@ -230,8 +190,7 @@
                 ph_name: "Tu Nombre Apellido", ph_room: "Tu Número de Habitación", ph_note: "Solicitudes especiales, alergias o notas", ph_catalog_name: "Ej: Tour en Barco VIP",
                 admin_title: "Gestión de Catálogo de Administrador:", admin_select_event: "Seleccionar Evento:", admin_catalog_name: "Nombre del Catálogo:", admin_select_photo: "Seleccionar Foto:",
                 btn_add: "Añadir", btn_clear: "Limpiar", msg_no_catalog: "No se ha subido ninguna imagen de catálogo para esta actividad todavía.",
-                wa_subject: "NUEVA SOLICITUD DE RESERVA",
-                wa_event: "Nombre de la Actividad", wa_catalog_name: "Nombre del Catálogo", wa_name: "Nombre Apellido", wa_room: "Número de Habitación", wa_date: "Fecha", wa_time: "Hora", wa_people: "Número de Personas", wa_note: "Nota"
+                wa_hello: "Hola", wa_event: "Evento", wa_catalog_name: "Nombre del Catálogo", wa_name: "Nombre Apellido", wa_room: "Número de Habitación", wa_date: "Fecha", wa_time: "Hora", wa_people: "Número de Personas", wa_note: "Nota"
             },
             fr: {
                 main_title: "Réservations d'Activités et Excursions de l'Hôtel", card_tour: "Visite et Excursion", card_restaurant: "Restaurant", card_spa: "Spa et Massage", card_other: "Autres",
@@ -241,8 +200,7 @@
                 ph_name: "Votre Nom Prénom", ph_room: "Votre Numéro de Chambre", ph_note: "Demandes spéciales, allergies ou notes", ph_catalog_name: "Ex: Excursion en Bateau VIP",
                 admin_title: "Gestion de Catalogue Admin:", admin_select_event: "Sélectionner un Événement:", admin_catalog_name: "Nom du Catalogue:", admin_select_photo: "Sélectionner Photo:",
                 btn_add: "Ajouter", btn_clear: "Effacer", msg_no_catalog: "Aucune image de catalogue n'a été téléchargée pour cette activité.",
-                wa_subject: "NOUVELLE DEMANDE DE RÉSERVATION",
-                wa_event: "Nom de l'Activité", wa_catalog_name: "Nom du Catalogue", wa_name: "Nom Prénom", wa_room: "Numéro de Chambre", wa_date: "Date", wa_time: "Heure", wa_people: "Nombre de Personnes", wa_note: "Note"
+                wa_hello: "Bonjour", wa_event: "Événement", wa_catalog_name: "Nom du Catalogue", wa_name: "Nom Prénom", wa_room: "Numéro de Chambre", wa_date: "Date", wa_time: "Heure", wa_people: "Nombre de Personnes", wa_note: "Note"
             },
             ru: {
                 main_title: "Бронирование туров и мероприятий в отеле", card_tour: "Тур и Экскурсия", card_restaurant: "Ресторан", card_spa: "СПА и Массаж", card_other: "Другое",
@@ -252,8 +210,7 @@
                 ph_name: "Ваше Имя Фамилия", ph_room: "Ваш Номер комнаты", ph_note: "Особые пожелания, аллергии или примечания", ph_catalog_name: "Пример: VIP-тур на лодке",
                 admin_title: "Управление каталогом администратора:", admin_select_event: "Выбрать мероприятие:", admin_catalog_name: "Название каталога:", admin_select_photo: "Выбрать фото:",
                 btn_add: "Добавить", btn_clear: "Очистить", msg_no_catalog: "Для этого мероприятия каталог еще не загружен.",
-                wa_subject: "НОВЫЙ ЗАПРОС НА БРОНИРОВАНИЕ",
-                wa_event: "Название Мероприятия", wa_catalog_name: "Название каталога", wa_name: "Имя Фамилия", wa_room: "Номер комнаты", wa_date: "Дата", wa_time: "Время", wa_people: "Количество человек", wa_note: "Примечание"
+                wa_hello: "Здравствуйте", wa_event: "Мероприятие", wa_catalog_name: "Название каталога", wa_name: "Имя Фамилия", wa_room: "Номер комнаты", wa_date: "Дата", wa_time: "Время", wa_people: "Количество человек", wa_note: "Примечание"
             },
             ar: {
                 main_title: "حجوزات الجولات والأنشطة الفندقية", card_tour: "جولة ورحلة", card_restaurant: "مطعم", card_spa: "سبا ومساج", card_other: "أخرى",
@@ -263,8 +220,7 @@
                 ph_name: "اسمك ولقبك", ph_room: "رقم غرفتك", ph_note: "طلبات خاصة، حساسيات، أو ملاحظات", ph_catalog_name: "مثال: جولة القارب VIP",
                 admin_title: "إدارة كتالوج المشرف:", admin_select_event: "اختر النشاط:", admin_catalog_name: "اسم الكتالوج:", admin_select_photo: "اختر الصورة:",
                 btn_add: "إضافة", btn_clear: "مسح", msg_no_catalog: "لم يتم تحميل أي صورة كتالوج لهذا النشاط بعد.",
-                wa_subject: "طلب حجز جديد",
-                wa_event: "اسم النشاط", wa_catalog_name: "اسم الكتالوج", wa_name: "الاسم واللقب", wa_room: "رقم الغرفة", wa_date: "التاريخ", wa_time: "الوقت", wa_people: "عدد الأشخاص", wa_note: "ملاحظة"
+                wa_hello: "مرحباً", wa_event: "النشاط", wa_catalog_name: "اسم الكتالوج", wa_name: "الاسم واللقب", wa_room: "رقم الغرفة", wa_date: "التاريخ", wa_time: "الوقت", wa_people: "عدد الأشخاص", wa_note: "ملاحظة"
             }
         };
         // --- DİL SÖZLÜĞÜ SONU ---
@@ -321,7 +277,7 @@
         }
         // --- IndexedDB Son ---
 
-        // --- DİL YÖNETİMİ ---
+        // --- DİL YÖNETİMİ (setLanguage) ---
         const langSelector = document.getElementById('languageSelector');
         const eventCardKeyMap = {
             "tour_excursion": "card_tour",
@@ -342,6 +298,7 @@
             document.querySelectorAll('[data-lang-key]').forEach(element => {
                 const key = element.getAttribute('data-lang-key');
                 if (t[key]) {
+                    // Label'ları sadece metinle güncelle
                     if (element.tagName === 'LABEL') {
                         element.textContent = t[key];
                     } else {
@@ -349,6 +306,7 @@
                     }
                 }
             });
+
 
             // 2. Placeholder'ları çevir
             document.querySelectorAll('[data-lang-placeholder]').forEach(element => {
@@ -374,21 +332,18 @@
             if (currentEvent) {
                 const eventNameKey = eventCardKeyMap[currentEvent];
                 document.getElementById('selectedEventTitle').textContent = t[eventNameKey] || currentEvent;
-                loadImages(currentEvent); 
+                loadImages(currentEvent);
             }
 
             // 6. Arapça için metin yönü ayarı (RTL)
             const isRTL = lang === 'ar';
             document.body.style.direction = isRTL ? 'rtl' : 'ltr';
-            document.querySelectorAll('input, textarea').forEach(input => {
-                input.style.textAlign = isRTL ? 'right' : 'left';
-            });
+            document.querySelectorAll('label').forEach(label => label.style.textAlign = isRTL ? 'right' : 'left');
         }
         
         // --- DOM Elementleri ve Olay Yönetimi ---
         const cards = document.querySelectorAll('.card');
         const eventDetail = document.getElementById('eventDetail');
-        const eventImagesContainer = document.getElementById('eventImages');
         const waLink = document.getElementById('whatsappLink');
         const specificWhatsappLink = document.getElementById('specificWhatsappLink');
         const specificReservationForm = document.getElementById('specificReservationForm');
@@ -397,42 +352,43 @@
         let currentImages = []; 
         let currentEventData = []; 
         let currentImageIndex = 0;
-        
 
-        // --- WhatsApp Link Oluşturma (Genel Form - ALT ALTA FORMAT) ---
+        // --- WhatsApp Link Oluşturma (Genel Form) ---
         function updateWhatsappLink() {
             const t = translations[currentLang];
-            const eventName = translateEventName(currentEvent);
-            
-            // Misafirin Girdiği Tüm Bilgileri Al
+            const eventNameKey = eventCardKeyMap[currentEvent];
+            const translatedEventName = t[eventNameKey] || currentEvent || 'Bilinmiyor';
+
+            // Misafirin Girdiği Tüm Bilgileri Al 
             const name = document.getElementById('name').value.trim() || '-';
             const room = document.getElementById('room').value.trim() || '-';
             const date = document.getElementById('date').value.trim() || '-';
             const time = document.getElementById('time').value.trim() || '-';
             const people = document.getElementById('people').value.trim() || '1';
             const note = document.getElementById('note').value.trim() || '-';
-            
-            // Mesaj Metnini Oluştur (ALT ALTA FORMAT - NL: %0A)
-            // Bu mesajı direkt URL'ye ekliyoruz (tekrar encodeURIComponent uygulamıyoruz)
-            let messageText = 
-                `*${t.wa_subject}*${NL}${NL}` + // Başlık (Bold) + 2 boş satır
-                `${t.wa_event}: *${eventName}*${NL}` +
-                `${t.wa_name}: ${name}${NL}` +
-                `${t.wa_room}: ${room}${NL}` +
-                `${t.wa_date}: ${date}${NL}` +
-                `${t.wa_time}: ${time}${NL}` +
-                `${t.wa_people}: ${people}${NL}` +
-                `${t.wa_note}: ${note}`;
-                
-            // URL'ye eklerken sadece boşlukları (+) ile değiştiriyoruz, diğer kodlar korunuyor
-            const finalMessage = messageText.replace(/ /g, '+');
 
-            waLink.href = `https://wa.me/${phoneNumber}?text=${finalMessage}`;
+            // Mesaj Metnini Oluştur
+            const rawMessageText = 
+                `${t.wa_hello},\n\n` +
+                `*${t.wa_event}*: ${translatedEventName}\n` +
+                `*${t.wa_name}*: ${name}\n` +
+                `*${t.wa_room}*: ${room}\n` +
+                `*${t.wa_date}*: ${date}\n` +
+                `*${t.wa_time}*: ${time}\n` +
+                `*${t.wa_people}*: ${people}\n` +
+                `*${t.wa_note}*: ${note}`;
+                
+            // KRİTİK DÜZELTME: Tüm metni tek seferde URL kodlama ile düzgün bir şekilde gönder
+            const encodedMessage = encodeURIComponent(rawMessageText);
+            waLink.href = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
         }
 
-        // --- WhatsApp Link Oluşturma (Ürüne Özel Form - ALT ALTA FORMAT) ---
+        // --- WhatsApp Link Oluşturma (Ürüne Özel Form) ---
         function updateSpecificLink() {
             const t = translations[currentLang];
+            const eventId = document.getElementById('specificEvent').value;
+            const eventNameKey = eventCardKeyMap[eventId];
+            const translatedEventName = t[eventNameKey] || eventId || 'Bilinmiyor';
             
             // Misafirin Girdiği Tüm Bilgileri Al
             const name = document.getElementById('specificName').value.trim() || '-';
@@ -441,31 +397,30 @@
             const time = document.getElementById('specificTime').value.trim() || '-';
             const people = document.getElementById('specificPeople').value.trim() || '1';
             const note = document.getElementById('specificNote').value.trim() || '-';
-            const photoName = specificPhotoNameHidden.value.trim() || '-'; // Katalog Adı
+            const photoName = specificPhotoNameHidden.value.trim() || '-'; 
 
-            // Mesaj Metnini Oluştur (ALT ALTA FORMAT - NL: %0A) - Etkinlik adı KALDIRILDI
-            // Bu mesajı direkt URL'ye ekliyoruz (tekrar encodeURIComponent uygulamıyoruz)
-            let messageText = 
-                `*${t.wa_subject}*${NL}${NL}` + // Başlık (Bold) + 2 boş satır
-                `${t.wa_catalog_name}: *${photoName}*${NL}` +
-                `${t.wa_name}: ${name}${NL}` +
-                `${t.wa_room}: ${room}${NL}` +
-                `${t.wa_date}: ${date}${NL}` +
-                `${t.wa_time}: ${time}${NL}` +
-                `${t.wa_people}: ${people}${NL}` +
-                `${t.wa_note}: ${note}`;
+            // Mesaj Metnini Oluştur
+            const rawMessageText = 
+                `${t.wa_hello},\n\n` +
+                `*${t.wa_event}*: ${translatedEventName}\n` +
+                `*${t.wa_catalog_name}*: ${photoName}\n` +
+                `*${t.wa_name}*: ${name}\n` +
+                `*${t.wa_room}*: ${room}\n` +
+                `*${t.wa_date}*: ${date}\n` +
+                `*${t.wa_time}*: ${time}\n` +
+                `*${t.wa_people}*: ${people}\n` +
+                `*${t.wa_note}*: ${note}`;
                 
-            // URL'ye eklerken sadece boşlukları (+) ile değiştiriyoruz, diğer kodlar korunuyor
-            const finalMessage = messageText.replace(/ /g, '+');
-
-            specificWhatsappLink.href = `https://wa.me/${phoneNumber}?text=${finalMessage}`;
+            // KRİTİK DÜZELTME: Tüm metni tek seferde URL kodlama ile düzgün bir şekilde gönder
+            const encodedMessage = encodeURIComponent(rawMessageText);
+            specificWhatsappLink.href = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
         }
 
-        // --- Input Dinleyicileri (Input değiştiğinde WhatsApp linkini otomatik güncelle) ---
+        // --- Input Dinleyicileri ---
+        // Tüm ilgili input ve textarea'ları dinle.
         document.querySelectorAll('input, textarea').forEach(input => {
             if (input.closest('#reservationForm, #specificForm, #guestInfo, #specificGuestInfo')) {
                 input.addEventListener('input', () => {
-                    // Her iki formu da kontrol et ve güncelle
                     updateWhatsappLink();
                     updateSpecificLink();
                 });
@@ -473,8 +428,10 @@
         });
 
 
-        // --- Katalog Görsellerini Yükleme ve Silme ---
+        // --- Diğer Olay Fonksiyonları (LoadImages, openModal vb.) ---
         async function loadImages(eventName) {
+            const eventImagesContainer = document.getElementById('eventImages');
+            const adminMsg = document.getElementById('adminMsg');
             eventImagesContainer.innerHTML = '';
             const imgs = await getImages(eventName);
             currentEventData = imgs; 
@@ -507,7 +464,7 @@
                     if (confirm(`Do you want to delete ${item.photoName || 'this image'}?`)) {
                         await deleteImage(item.id);
                         loadImages(eventName);
-                        document.getElementById('adminMsg').textContent = `'${item.photoName || 'Adsız Resim'}' deleted.`;
+                        adminMsg.textContent = `'${item.photoName || 'Adsız Resim'}' deleted.`;
                     }
                 });
 
@@ -517,10 +474,9 @@
             });
         }
         
-        // --- Modal Fonksiyonları ---
-
         function openModal(src, photoName, eventName) { 
-            document.getElementById('imageModal').style.display = 'flex';
+            const modal = document.getElementById('imageModal');
+            modal.style.display = 'flex';
             document.getElementById('modalImage').src = src;
             document.getElementById('modalReserveBtn').setAttribute('data-photo-name', photoName); 
             document.getElementById('modalReserveBtn').setAttribute('data-event-name', eventName);
@@ -545,16 +501,18 @@
             updateModalContent();
         };
 
-        // Modal "Rezervasyon Yap" Butonu
+
         document.getElementById('modalReserveBtn').onclick = () => {
-            document.getElementById('imageModal').style.display = 'none';
+            const modal = document.getElementById('imageModal');
+            const specificPhotoNameDisplay = document.getElementById('specificPhotoName'); 
+            const specificReservationImage = document.getElementById('specificReservationImage');
+            
+            modal.style.display = 'none';
             eventDetail.style.display = 'none';
             specificReservationForm.style.display = 'block';
             
-            // Genel formdan isim ve oda numarasını özel forma kopyala
+            // Genel formdaki Ad Soyad bilgisini özel forma taşı
             document.getElementById('specificName').value = document.getElementById('name').value;
-            document.getElementById('specificRoom').value = document.getElementById('room').value;
-
 
             specificReservationForm.scrollIntoView({ behavior: 'smooth' });
 
@@ -563,132 +521,68 @@
 
             const selectedPhotoData = currentEventData.find(item => item.photoName === selectedPhotoName && item.eventName === selectedEvent);
             if(selectedPhotoData) {
-                document.getElementById('specificReservationImage').src = selectedPhotoData.data;
-            } else {
-                 document.getElementById('specificReservationImage').src = 'https://via.placeholder.com/250x150.png?text=RESIM+BULUNAMADI';
+                specificReservationImage.src = selectedPhotoData.data;
             }
             
-            document.getElementById('specificPhotoName').textContent = selectedPhotoName; 
+            specificPhotoNameDisplay.textContent = selectedPhotoName; 
 
             document.getElementById('specificEvent').value = selectedEvent;
             specificPhotoNameHidden.value = selectedPhotoName; 
 
             updateSpecificLink(); 
         };
-
-        // Etkinlik Kartı Tıklama
+        
         cards.forEach(card => {
             card.addEventListener('click', () => {
                 currentEvent = card.getAttribute('data-event');
                 const eventNameKey = eventCardKeyMap[currentEvent];
                 const eventTitle = translations[currentLang][eventNameKey] || currentEvent; 
 
-                // Diğer formu gizle, normal formu göster
+                document.getElementById('selectedEventTitle').textContent = eventTitle;
+                document.getElementById('event').value = currentEvent;
+                
                 specificReservationForm.style.display = 'none';
                 eventDetail.style.display = 'block';
                 eventDetail.scrollIntoView({ behavior: 'smooth' });
-
-                document.getElementById('selectedEventTitle').textContent = eventTitle;
-                document.getElementById('event').value = currentEvent;
-
-                // Katalog görsellerini yükle
+                
                 loadImages(currentEvent);
-
-                // WhatsApp linkini güncelle
-                updateWhatsappLink();
+                updateWhatsappLink(); 
             });
         });
-
-        // --- Admin Paneli Fonksiyonları ---
-
-        // Admin Paneli Görünürlüğü (URL'de #admin ile açılır)
-        if (window.location.hash === '#admin') {
-            document.getElementById('adminPanel').style.display = 'block';
-        }
-
-        // Admin Add Butonu
-        document.getElementById('adminAdd').addEventListener('click', async () => {
-            const eventName = document.getElementById('adminEventSelect').value;
-            const photoName = document.getElementById('adminPhotoName').value.trim();
-            const files = document.getElementById('adminUpload').files;
-            const adminMsg = document.getElementById('adminMsg');
-
-            if (!photoName || files.length === 0) {
-                adminMsg.textContent = 'Please enter a catalog name and select at least one image.';
-                adminMsg.style.color = '#e53935';
-                return;
-            }
-
-            const dataUrls = [];
-
-            const processFile = (file) => {
-                return new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onload = e => {
-                        dataUrls.push(e.target.result);
-                        resolve();
-                    };
-                    reader.onerror = e => reject(e);
-                    reader.readAsDataURL(file);
-                });
-            };
-
-            // Tüm dosyaları asenkron olarak oku
-            try {
-                const filePromises = Array.from(files).map(processFile);
-                await Promise.all(filePromises);
-
-                // IndexedDB'ye kaydet
-                await addImages(eventName, photoName, dataUrls);
-                
-                adminMsg.textContent = `${files.length} image(s) added successfully for ${translateEventName(eventName)} (${photoName}).`;
-                adminMsg.style.color = '#00796b';
-                
-                // Formu temizle ve katalog görsellerini yenile (eğer açıksa)
-                document.getElementById('adminUpload').value = '';
-                document.getElementById('adminPhotoName').value = '';
-                if (currentEvent === eventName) {
-                    loadImages(currentEvent);
-                }
-                
-            } catch (error) {
-                adminMsg.textContent = 'Error during file processing or database saving: ' + error.message;
-                adminMsg.style.color = '#e53935';
-            }
-        });
-
-        // Admin Clear Butonu
-        document.getElementById('adminClear').addEventListener('click', () => {
-            document.getElementById('adminUpload').value = '';
-            document.getElementById('adminPhotoName').value = '';
-            document.getElementById('adminMsg').textContent = 'Admin inputs cleared.';
-            document.getElementById('adminMsg').style.color = '#222';
-        });
-
-        // --- BAŞLANGIÇ AYARLARI ---
         
-        // Dil Seçici Değiştiğinde
+        // Admin İşlemleri (Değişmedi)
+        const ADMIN_PASSWORD = 'otel123'; 
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key.toLowerCase() === 'a') {
+                e.preventDefault();
+                const pass = prompt('Admin şifresini girin:');
+                if (pass === ADMIN_PASSWORD) {
+                    document.getElementById('adminPanel').style.display = 'block';
+                    alert('Admin girişi başarılı!');
+                } else if (pass !== null) {
+                    alert('Hatalı şifre!');
+                }
+            }
+        });
+
+        // Dil seçici olay dinleyicisi
         langSelector.addEventListener('change', (e) => {
             setLanguage(e.target.value);
-            // Dil değiştiğinde formları gizle
-            eventDetail.style.display = 'none';
-            specificReservationForm.style.display = 'none';
+            localStorage.setItem('appLang', e.target.value);
         });
 
-        // DB'yi aç ve varsayılan dili ayarla
-        openDB().then(() => {
-            console.log('IndexedDB is ready.');
-            // Başlangıç dilini ayarla
-            setLanguage(langSelector.value);
-        }).catch(e => {
-            console.error('IndexedDB Error:', e);
-            alert('Your browser does not support local catalog storage (IndexedDB).');
-        });
-
-        // Tarih Alanı Minimum Değer Ayarı
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('date').min = today;
-        document.getElementById('specificDate').min = today;
+        // --- BAŞLANGIÇ ---
+        // Uygulama başladığında dili ayarla
+        const savedLang = localStorage.getItem('appLang') || 'tr';
+        langSelector.value = savedLang;
+        setLanguage(savedLang); 
+        
+        // Veritabanı başlangıcı
+        openDB().then(() => console.log('IndexedDB hazır')).catch(err => console.error('IndexedDB hatası:', err));
+        
+        // İlk yüklemede ve dil ayarından sonra linkleri güncelle
+        updateWhatsappLink();
+        updateSpecificLink();
     </script>
 </body>
 </html>
